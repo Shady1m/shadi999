@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة جانبية</title>
+    <style>
+        body {
+    margin: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    overflow-x: hidden;
+    font-weight: bold;
+}
+
+.sidebar {
+    width: 200px;
+    height: 100%;
+    background-color: #ffffff00;
+    color: #080808;
+    position: fixed;
+    top: 0;
+    left: -200px; /* Hidden by default */
+    transition: left 0.3s ease, box-shadow 0.3s ease;
+    padding: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar.open {
+    left: 0; /* Show the sidebar */
+}
+
+.sidebar .open-btn {
+    font-size: 24px;
+    background-color: #004aaa;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 0px; /* Position the button outside the sidebar */
+    border-radius: 4px;
+    transition: right 0.3s ease, transform 0.3s ease;
+    transform: rotate(90deg);
+}
+
+.sidebar.open .open-btn {
+    right: -70px; /* Move the button inside the sidebar when open */
+    transform: rotate(0);
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    font-size: 20px;
+    color: #f0a500;
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+.sidebar ul li {
+    margin: 20px 0;
+}
+
+.sidebar ul li a {
+    color: #111111;
+    text-decoration: none;
+    font-size: 1.3em;
+    transition: color 0.3s, padding-left 0.3s;
+    padding-left: 10px;
+}
+
+.sidebar ul li a:hover {
+    color: #000000;
+}
+
+.content {
+    transition: margin-left 0.3s ease;
+    margin-left: 0; /* Start with no margin when sidebar is hidden */
+    padding: 12px;
+}
+
+.content.sidebar-open {
+    margin-left: 200px; /* Adjust for the sidebar width */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table, th, td {
+    border: 2px solid #848388;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: #0e448b;
+    color: #fff;
+}
+td:hover {
+    background-color: rgb(255, 124, 124);
+}
+
+.hidden {
+    display: none;
+}
+
+/* استعلام وسائط لتصميم الأجهزة ذات الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* زيادة عرض الشريط الجانبي ليملأ الشاشة */
+        left: -100%; /* إخفاء الشريط الجانبي خارج الشاشة */
+    }
+
+    .sidebar.open {
+        left: 0; /* عرض الشريط الجانبي بالكامل عند فتحه */
+    }
+
+    .sidebar .open-btn {
+        right: 10px; /* ضبط موضع زر الفتح عند شاشات أصغر */
+        top: 10px;
+        transform: rotate(0); /* إزالة التدوير عند الشاشات الصغيرة */
+    }
+
+    .content.sidebar-open {
+        margin-left: 0; /* إزالة الهوامش لتتناسب مع الشريط الجانبي الذي يعرض على الشاشة */
+    }
+
+    .sidebar ul {
+        text-align: left; /* محاذاة النصوص في القائمة لليسار */
+    }
+
+    .sidebar ul li {
+        margin: 15px 0; /* تقليل المسافة بين عناصر القائمة */
+    }
+
+    table {
+        font-size: 0.9em; /* تقليل حجم الخط في الجداول لتناسب الشاشات الصغيرة */
+    }
+
+    th, td {
+        padding: 8px; /* تقليل التباعد في الخلايا */
+    }
+}
+
+/* استعلام وسائط لتصميم الشاشات الأكبر مثل أجهزة الكمبيوتر اللوحية */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        width: 250px; /* توسيع عرض الشريط الجانبي ليتناسب مع الشاشات الأكبر */
+    }
+
+    .content.sidebar-open {
+        margin-left: 250px; /* تعديل الهوامش ليتناسب مع عرض الشريط الجانبي */
+    }
+
+    .sidebar .open-btn {
+        right: -70px; /* تعديل موضع زر الفتح للشاشات المتوسطة */
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <button class="open-btn" onclick="toggleSidebar()">☰</button>
+        
+        <ul>
+            <li><a href="#pronouns" onclick="showTable('pronouns')">الضمائر الأساسية</a></li>
+            <li><a href="#verbs" onclick="showTable('verbs')">تصريف أفعال المصدر</a></li>
+            <li><a href="#nouns" onclick="showTable('nouns')">الأسماء</a></li>
+            <li><a href="#adjectives" onclick="showTable('adjectives')">الصفات</a></li>
+        </ul>
+    </div>
+
+    <div class="content" id="content">
+        <!-- Your content here -->
+        <div id="pronouns-table" class="hidden">
+            <table>
+                <tr class="table-header">
+                    <th>الضمير الشخصي (فاعل)</th>
+                    <th>الضمير المفعول به</th>
+                    <th>ضمير الملكية</th>
+                    <th>الضمير المنعكس</th>
+                </tr>
+                <tr>
+                    <td>ich (أنا)</td>
+                    <td>mich (لي)</td>
+                    <td>mein (لي)</td>
+                    <td>mich (نفسي)</td>
+                </tr>
+                <tr>
+                    <td>du (أنتَ/أنتِ)</td>
+                    <td>dich (لك)</td>
+                    <td>dein (لك)</td>
+                    <td>dich (نفسك)</td>
+                </tr>
+                <tr>
+                    <td>er (هو)</td>
+                    <td>ihn (له)</td>
+                    <td>sein (له)</td>
+                    <td>sich (نفسه)</td>
+                </tr>
+                <tr>
+                    <td>sie (هي)</td>
+                    <td>sie (لها)</td>
+                    <td>ihr (لها)</td>
+                    <td>sich (نفسها)</td>
+                </tr>
+                <tr>
+                    <td>es (هو/هي لغير العاقل)</td>
+                    <td>es (له/لها)</td>
+                    <td>sein (له/لها)</td>
+                    <td>sich (نفسه/نفسها)</td>
+                </tr>
+                <tr>
+                    <td>wir (نحن)</td>
+                    <td>uns (لنا)</td>
+                    <td>unser (لنا)</td>
+                    <td>uns (أنفسنا)</td>
+                </tr>
+                <tr>
+                    <td>ihr (أنتم/أنتن)</td>
+                    <td>euch (لكم/لكن)</td>
+                    <td>euer (لكم/لكن)</td>
+                    <td>euch (أنفسكم/أنفسكن)</td>
+                </tr>
+                <tr>
+                    <td>sie (هم/هن)</td>
+                    <td>sie (لهم/لهن)</td>
+                    <td>ihr (لهم/لهن)</td>
+                    <td>sich (أنفسهم/أنفسهن)</td>
+                </tr>
+                <tr>
+                    <td>Sie (حضرتك/حضرتكم)</td>
+                    <td>Sie (لحضرتك/لحضرتكم)</td>
+                    <td>Ihr (لحضرتك/لحضرتكم)</td>
+                    <td>sich (حضرتك/حضرتكم)</td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="verbs-table" class="hidden">
+            <table>
+                <tr class="table-header">
+                    <th rowspan="2">الفعل</th>
+                    <th colspan="3">المضارع (Präsens)</th>
+                    <th colspan="3">الماضي (Präteritum)</th>
+                    <th colspan="3">التصريف الثالث (Partizip II)</th>
+                    <th colspan="3">المستقبل (Futur I)</th>
+                </tr>
+                <tr>
+                    <th>ich</th>
+                    <th>أنتَ/أنتِ</th>
+                    <th>هو/هي</th>
+                    <th>أنا</th>
+                    <th>أنتَ/أنتِ</th>
+                    <th>هو/هي</th>
+                    <th>التصريف الثالث</th>
+                    <th>سوف أ</th>
+                    <th>سوف أنتَ/أنتِ</th>
+                    <th>سوف هو/هي</th>
+                </tr>
+                <tr>
+                    <tr>
+                        <td>gehen (يذهب)</td>
+                        <td>gehe</td>
+                        <td>gehst</td>
+                        <td>geht</td>
+                        <td>ging</td>
+                        <td>gingst</td>
+                        <td>ging</td>
+                        <td>gegangen</td>
+                        <td>werde gehen</td>
+                        <td>wirst gehen</td>
+                        <td>wird gehen</td>
+                    </tr>
+                    <tr>
+                        <td>kommen (يأتي)</td>
+                        <td>komme</td>
+                        <td>kommst</td>
+                        <td>kommt</td>
+                        <td>kam</td>
+                        <td>kamst</td>
+                        <td>kam</td>
+                        <td>gekommen</td>
+                        <td>werde kommen</td>
+                        <td>wirst kommen</td>
+                        <td>wird kommen</td>
+                    </tr>
+                    <tr>
+                        <td>sehen (يرى)</td>
+                        <td>sehe</td>
+                        <td>siehst</td>
+                        <td>sieht</td>
+                        <td>sah</td>
+                        <td>sahst</td>
+                        <td>sah</td>
+                        <td>gesehen</td>
+                        <td>werde sehen</td>
+                        <td>wirst sehen</td>
+                        <td>wird sehen</td>
+                    </tr>
+                    <tr>
+                        <td>essen (يأكل)</td>
+                        <td>esse</td>
+                        <td>isst</td>
+                        <td>isst</td>
+                        <td>aß</td>
+                        <td>aßest</td>
+                        <td>aß</td>
+                        <td>gegessen</td>
+                        <td>werde essen</td>
+                        <td>wirst essen</td>
+                        <td>wird essen</td>
+                    </tr>
+                    <tr>
+                        <td>trinken (يشرب)</td>
+                        <td>trinke</td>
+                        <td>trinkst</td>
+                        <td>trinkt</td>
+                        <td>trank</td>
+                        <td>trankst</td>
+                        <td>trank</td>
+                        <td>getrunken</td>
+                        <td>werde trinken</td>
+                        <td>wirst trinken</td>
+                        <td>wird trinken</td>
+                    </tr>
+                    <tr>
+                        <td>fahren (يسافر/يقود)</td>
+                        <td>fahre</td>
+                        <td>fährst</td>
+                        <td>fährt</td>
+                        <td>fuhr</td>
+                        <td>fuhrst</td>
+                        <td>fuhr</td>
+                        <td>gefahren</td>
+                        <td>werde fahren</td>
+                        <td>wirst fahren</td>
+                        <td>wird fahren</td>
+                    </tr>
+                    <tr>
+                        <td>laufen (يركض)</td>
+                        <td>laufe</td>
+                        <td>läufst</td>
+                        <td>läuft</td>
+                        <td>lief</td>
+                        <td>liefst</td>
+                        <td>lief</td>
+                        <td>gelaufen</td>
+                        <td>werde laufen</td>
+                        <td>wirst laufen</td>
+                        <td>wird laufen</td>
+                    </tr>
+                    <tr>
+                        <td>sprechen (يتحدث)</td>
+                        <td>spreche</td>
+                        <td>sprichst</td>
+                        <td>spricht</td>
+                        <td>sprach</td>
+                        <td>sprachst</td>
+                        <td>sprach</td>
+                        <td>gesprochen</td>
+                        <td>werde sprechen</td>
+                        <td>wirst sprechen</td>
+                        <td>wird sprechen</td>
+                    </tr>
+                    <tr>
+                        <td>schreiben (يكتب)</td>
+                        <td>schreibe</td>
+                        <td>schreibst</td>
+                        <td>schreibt</td>
+                        <td>schrieb</td>
+                        <td>schriebst</td>
+                        <td>schrieb</td>
+                        <td>geschrieben</td>
+                        <td>werde schreiben</td>
+                        <td>wirst schreiben</td>
+                        <td>wird schreiben</td>
+                    </tr>
+                    <tr>
+                        <td>lesen (يقرأ)</td>
+                        <td>lese</td>
+                        <td>liest</td>
+                        <td>liest</td>
+                        <td>las</td>
+                        <td>lasest</td>
+                        <td>las</td>
+                        <td>gelesen</td>
+                        <td>werde lesen</td>
+                        <td>wirst lesen</td>
+                        <td>wird lesen</td>
+                    </tr>
+                    <tr>
+                        <td>geben (يعطي)</td>
+                        <td>gebe</td>
+                        <td>gibst</td>
+                        <td>gibt</td>
+                        <td>gab</td>
+                        <td>gabst</td>
+                        <td>gab</td>
+                        <td>gegeben</td>
+                        <td>werde geben</td>
+                        <td>wirst geben</td>
+                        <td>wird geben</td>
+                    </tr>
+                    <tr>
+                        <td>nehmen (يأخذ)</td>
+                        <td>nehme</td>
+                        <td>nimmst</td>
+                        <td>nimmt</td>
+                        <td>nahm</td>
+                        <td>nahmst</td>
+                        <td>nahm</td>
+                        <td>genommen</td>
+                        <td>werde nehmen</td>
+                        <td>wirst nehmen</td>
+                        <td>wird nehmen</td>
+                    </tr>
+                    <tr>
+                        <td>finden (يجد)</td>
+                        <td>finde</td>
+                        <td>findest</td>
+                        <td>findet</td>
+                        <td>fand</td>
+                        <td>fandest</td>
+                        <td>fand</td>
+                        <td>gefunden</td>
+                        <td>werde finden</td>
+                        <td>wirst finden</td>
+                        <td>wird finden</td>
+                    </tr>
+                    <tr>
+                        <td>stehen (يكون واقفًا)</td>
+                        <td>stehe</td>
+                        <td>stehst</td>
+                        <td>steht</td>
+                        <td>stand</td>
+                        <td>standst</td>
+                        <td>stand</td>
+                        <td>gestanden</td>
+                        <td>werde stehen</td>
+                        <td>wirst stehen</td>
+                        <td>wird stehen</td>
+                    </tr>
+                    <tr>
+                        <td>setzen (يجلس)</td>
+                        <td>setze</td>
+                        <td>setzt</td>
+                        <td>setzt</td>
+                        <td>setzte</td>
+                        <td>setztest</td>
+                        <td>setzte</td>
+                        <td>gesetzt</td>
+                        <td>werde setzen</td>
+                        <td>wirst setzen</td>
+                        <td>wird setzen</td>
+                    </tr>
+                    <tr>
+                        <td>arbeiten (يعمل)</td>
+                        <td>arbeite</td>
+                        <td>arbeitest</td>
+                        <td>arbeitet</td>
+                        <td>arbeitete</td>
+                        <td>arbeitest</td>
+                        <td>arbeitete</td>
+                        <td>gearbeitet</td>
+                        <td>werde arbeiten</td>
+                        <td>wirst arbeiten</td>
+                        <td>wird arbeiten</td>
+                    </tr>
+                    <tr>
+                        <td>verstehen (يفهم)</td>
+                        <td>verstehe</td>
+                        <td>verstehst</td>
+                        <td>versteht</td>
+                        <td>verstand</td>
+                        <td>verstandst</td>
+                        <td>verstand</td>
+                        <td>verstanden</td>
+                        <td>werde verstehen</td>
+                        <td>wirst verstehen</td>
+                        <td>wird verstehen</td>
+                    </tr>
+                    <tr>
+                        <td>vergessen (ينسى)</td>
+                        <td>vergesse</td>
+                        <td>vergisst</td>
+                        <td>vergisst</td>
+                        <td>vergaß</td>
+                        <td>vergaßest</td>
+                        <td>vergaß</td>
+                        <td>vergessen</td>
+                        <td>werde vergessen</td>
+                        <td>wirst vergessen</td>
+                        <td>wird vergessen</td>
+                    </tr>
+                    <tr>
+                        <td>bleiben (يبقى)</td>
+                        <td>bleibe</td>
+                        <td>bleibst</td>
+                        <td>bleibt</td>
+                        <td>blieb</td>
+                        <td>bliebst</td>
+                        <td>blieb</td>
+                        <td>geblieben</td>
+                        <td>werde bleiben</td>
+                        <td>wirst bleiben</td>
+                        <td>wird bleiben</td>
+                    </tr>
+                    <tr>
+                        <td>beginnen (يبدأ)</td>
+                        <td>beginne</td>
+                        <td>beginnst</td>
+                        <td>beginnt</td>
+                        <td>begann</td>
+                        <td>begannst</td>
+                        <td>begann</td>
+                        <td>begonnen</td>
+                        <td>werde beginnen</td>
+                        <td>wirst beginnen</td>
+                        <td>wird beginnen</td>
+                    </tr>
+                    <tr>
+                        <td>laufen (يركض)</td>
+                        <td>laufe</td>
+                        <td>läufst</td>
+                        <td>läuft</td>
+                        <td>lief</td>
+                        <td>liefst</td>
+                        <td>lief</td>
+                        <td>gelaufen</td>
+                        <td>werde laufen</td>
+                        <td>wirst laufen</td>
+                        <td>wird laufen</td>
+                    </tr>
+                    <tr>
+                        <td>vergessen (ينسى)</td>
+                        <td>vergesse</td>
+                        <td>vergisst</td>
+                        <td>vergisst</td>
+                        <td>vergaß</td>
+                        <td>vergaßest</td>
+                        <td>vergaß</td>
+                        <td>vergessen</td>
+                        <td>werde vergessen</td>
+                        <td>wirst vergessen</td>
+                        <td>wird vergessen</td>
+                    </tr>
+                    <tr>
+                        <td>laufen (يركض)</td>
+                        <td>laufe</td>
+                        <td>läufst</td>
+                        <td>läuft</td>
+                        <td>lief</td>
+                        <td>liefst</td>
+                        <td>lief</td>
+                        <td>gelaufen</td>
+                        <td>werde laufen</td>
+                        <td>wirst laufen</td>
+                        <td>wird laufen</td>
+                    </tr>
+                    <tr>
+                        <td>sehen (يرى)</td>
+                        <td>sehe</td>
+                        <td>siehst</td>
+                        <td>sieht</td>
+                        <td>sah</td>
+                        <td>sahst</td>
+                        <td>sah</td>
+                        <td>gesehen</td>
+                        <td>werde sehen</td>
+                        <td>wirst sehen</td>
+                        <td>wird sehen</td>
+                    </tr>
+                    <tr>
+                        <td>vergessen (ينسى)</td>
+                        <td>vergesse</td>
+                        <td>vergisst</td>
+                        <td>vergisst</td>
+                        <td>vergaß</td>
+                        <td>vergaßest</td>
+                        <td>vergaß</td>
+                        <td>vergessen</td>
+                        <td>werde vergessen</td>
+                        <td>wirst vergessen</td>
+                        <td>wird vergessen</td>
+                    </tr>
+                <!-- Add more verbs as needed -->
+            </table>
+        </div>
+        <div id="nouns-table" class="hidden">
+            <table>
+                <tr class="table-header">
+                    <th>مذكر</th>
+                    <th>مؤنث</th>
+                    <th>محايد</th>
+                    <th>جمع</th>
+                </tr>
+                <!-- Existing rows -->
+                <tr>
+                    <td>der Tisch (الطاولة) - die Tische (الطاولات)</td>
+                    <td>die Lampe (اللمبة) - die Lampen (اللمبات)</td>
+                    <td>das Buch (الكتاب) - die Bücher (الكتب)</td>
+                    <td>die Stühle (الكراسي)</td>
+                </tr>
+                <tr>
+                    <td>der Hund (الكلب) - die Hunde (الكلاب)</td>
+                    <td>die Katze (القطة) - die Katzen (القطط)</td>
+                    <td>das Tier (الحيوان) - die Tiere (الحيوانات)</td>
+                    <td>die Hunde (الكلاب)</td>
+                </tr>
+                <tr>
+                    <td>der Lehrer (المدرس) - die Lehrer (المدرسون)</td>
+                    <td>die Lehrerin (المدرسة) - die Lehrerinnen (المدرسات)</td>
+                    <td>das Kind (الطفل) - die Kinder (الأطفال)</td>
+                    <td>die Lehrer (المدرسون)</td>
+                </tr>
+                <tr>
+                    <td>der Apfel (التفاح) - die Äpfel (التفاح جمع)</td>
+                    <td>die Orange (البرتقالة) - die Orangen (البرتقالات)</td>
+                    <td>das Obst (الفاكهة) - die Obstsorten (أنواع الفواكه)</td>
+                    <td>die Äpfel (التفاح جمع)</td>
+                </tr>
+                <tr>
+                    <td>der Stuhl (الكرسي) - die Stühle (الكراسي)</td>
+                    <td>die Couch (الأريكة) - die Couchen (الأرائك)</td>
+                    <td>das Sofa (السرير) - die Sofas (الأسرّة)</td>
+                    <td>die Stühle (الكراسي)</td>
+                </tr>
+                <tr>
+                    <td>der Arzt (الطبيب) - die Ärzte (الأطباء)</td>
+                    <td>die Ärztin (الطبيبة) - die Ärztinnen (الطبيبات)</td>
+                    <td>das Krankenhaus (المستشفى) - die Krankenhäuser (المستشفيات)</td>
+                    <td>die Ärzte (الأطباء)</td>
+                </tr>
+                <tr>
+                    <td>der Mann (الرجل) - die Männer (الرجال)</td>
+                    <td>die Frau (المرأة) - die Frauen (النساء)</td>
+                    <td>das Paar (الزوجان) - die Paare (الأزواج)</td>
+                    <td>die Männer (الرجال)</td>
+                </tr>
+                <tr>
+                    <td>der Wagen (السيارة) - die Wagen (العربات)</td>
+                    <td>die Straßenbahn (الترام) - die Straßenbahnen (الترام)</td>
+                    <td>das Auto (السيارة) - die Autos (السيارات)</td>
+                    <td>die Wagen (العربات)</td>
+                </tr>
+                <tr>
+                    <td>der Freund (الصديق) - die Freunde (الأصدقاء)</td>
+                    <td>die Freundin (الصديقة) - die Freundinnen (الصديقات)</td>
+                    <td>das Verhältnis (العلاقة) - die Verhältnisse (العلاقات)</td>
+                    <td>die Freunde (الأصدقاء)</td>
+                </tr>
+                <tr>
+                    <td>der Lehrer (المدرس) - die Lehrer (المدرسون)</td>
+                    <td>die Lehrerin (المدرسة) - die Lehrerinnen (المدرسات)</td>
+                    <td>das Klassenzimmer (الفصل الدراسي) - die Klassenzimmer (الفصول الدراسية)</td>
+                    <td>die Lehrer (المدرسون)</td>
+                </tr>
+                <tr>
+                    <td>der Park (الحديقة) - die Parks (الحدائق)</td>
+                    <td>die Wiese (المروج) - die Wiesen (المروج)</td>
+                    <td>das Gelände (الأرض) - die Gelände (الأراضي)</td>
+                    <td>die Parks (الحدائق)</td>
+                </tr>
+                <tr>
+                    <td>der Film (الفيلم) - die Filme (الأفلام)</td>
+                    <td>die Serie (السلسلة) - die Serien (السلاسل)</td>
+                    <td>das Kino (السينما) - die Kinos (السينمات)</td>
+                    <td>die Filme (الأفلام)</td>
+                </tr>
+                <tr>
+                    <td>der Schlüssel (المفتاح) - die Schlüssel (المفاتيح)</td>
+                    <td>die Tür (الباب) - die Türen (الأبواب)</td>
+                    <td>das Schloss (القفل) - die Schlösser (الأقفال)</td>
+                    <td>die Schlüssel (المفاتيح)</td>
+                </tr>
+                <tr>
+                    <td>der Kuchen (الكعكة) - die Kuchen (الكعكات)</td>
+                    <td>die Torte (التورتة) - die Torten (التورتات)</td>
+                    <td>das Gebäck (المخبوزات) - die Gebäcke (المخبوزات)</td>
+                    <td>die Kuchen (الكعكات)</td>
+                </tr>
+                <tr>
+                    <td>der Monat (الشهر) - die Monate (الأشهر)</td>
+                    <td>die Woche (الأسبوع) - die Wochen (الأسابيع)</td>
+                    <td>das Jahr (السنة) - die Jahre (السنوات)</td>
+                    <td>die Monate (الأشهر)</td>
+                </tr>
+                <tr>
+                    <td>der Stift (القلم) - die Stifte (الأقلام)</td>
+                    <td>die Feder (الريشة) - die Federn (الريشات)</td>
+                    <td>das Schreibzeug (أدوات الكتابة) - die Schreibzeuge (أدوات الكتابة)</td>
+                    <td>die Stifte (الأقلام)</td>
+                </tr>
+                <!-- New rows -->
+                <tr>
+                    <td>der Computer (الكمبيوتر) - die Computer (الكمبيوترات)</td>
+                    <td>die Tastatur (لوحة المفاتيح) - die Tastaturen (لوحات المفاتيح)</td>
+                    <td>das Programm (البرنامج) - die Programme (البرامج)</td>
+                    <td>die Computer (الكمبيوترات)</td>
+                </tr>
+                <tr>
+                    <td>der Löffel (المعلقة) - die Löffel (الملاعق)</td>
+                    <td>die Gabel (الشوكة) - die Gabeln (الشوك)</td>
+                    <td>das Besteck (أدوات المائدة) - die Bestecke (أدوات المائدة)</td>
+                    <td>die Löffel (الملاعق)</td>
+                </tr>
+                <tr>
+                    <td>der Fernseher (التلفاز) - die Fernseher (التلفزيونات)</td>
+                    <td>die Fernbedienung (جهاز التحكم عن بُعد) - die Fernbedienungen (أجهزة التحكم عن بُعد)</td>
+                    <td>das Bild (الصورة) - die Bilder (الصور)</td>
+                    <td>die Fernseher (التلفزيونات)</td>
+                </tr>
+                <tr>
+                    <td>der Lehrer (المدرس) - die Lehrer (المدرسون)</td>
+                    <td>die Schülerin (التلميذة) - die Schülerinnen (التلميذات)</td>
+                    <td>das Heft (الكراس) - die Hefte (الكراسات)</td>
+                    <td>die Lehrer (المدرسون)</td>
+                </tr>
+                <tr>
+                    <td>der Brief (الرسالة) - die Briefe (الرسائل)</td>
+                    <td>die Postkarte (بطاقة البريد) - die Postkarten (بطاقات البريد)</td>
+                    <td>das Paket (الطرد) - die Pakete (الطرود)</td>
+                    <td>die Briefe (الرسائل)</td>
+                </tr>
+                <tr>
+                    <td>der Apfelkuchen (فطيرة التفاح) - die Apfelkuchen (فطائر التفاح)</td>
+                    <td>die Torte (التورتة) - die Torten (التورتات)</td>
+                    <td>das Gebäck (المخبوزات) - die Gebäcke (المخبوزات)</td>
+                    <td>die Apfelkuchen (فطائر التفاح)</td>
+                </tr>
+                <tr>
+                    <td>der Sommer (الصيف) - die Sommer (الصيف)</td>
+                    <td>die Winter (الشتاء) - die Winter (الشتاء)</td>
+                    <td>das Wetter (الطقس) - die Wetter (الأجواء)</td>
+                    <td>die Sommer (الصيف)</td>
+                </tr>
+                <tr>
+                    <td>der Radfahrer (راكب الدراجة) - die Radfahrer (راكبو الدراجات)</td>
+                    <td>die Radfahrerin (راكبة الدراجة) - die Radfahrerinnen (راكبات الدراجات)</td>
+                    <td>das Fahrrad (الدراجة) - die Fahrräder (الدراجات)</td>
+                    <td>die Radfahrer (راكبو الدراجات)</td>
+                </tr>
+                <tr>
+                    <td>der Schuh (الحذاء) - die Schuhe (الأحذية)</td>
+                    <td>die Sohle (النعل) - die Sohlen (الأنعل)</td>
+                    <td>das Paar Schuhe (زوج من الأحذية) - die Paare Schuhe (أزواج من الأحذية)</td>
+                    <td>die Schuhe (الأحذية)</td>
+                </tr>
+                <tr>
+                    <td>der Schlüssel (المفتاح) - die Schlüssel (المفاتيح)</td>
+                    <td>die Tür (الباب) - die Türen (الأبواب)</td>
+                    <td>das Schloss (القفل) - die Schlösser (الأقفال)</td>
+                    <td>die Schlüssel (المفاتيح)</td>
+                </tr>
+                <tr>
+                    <td>der Stift (القلم) - die Stifte (الأقلام)</td>
+                    <td>die Feder (الريشة) - die Federn (الريشات)</td>
+                    <td>das Schreibzeug (أدوات الكتابة) - die Schreibzeuge (أدوات الكتابة)</td>
+                    <td>die Stifte (الأقلام)</td>
+                </tr>
+                <tr>
+                    <td>der Platz (المكان) - die Plätze (الأماكن)</td>
+                    <td>die Fläche (السطح) - die Flächen (الأسطح)</td>
+                    <td>das Areal (المنطقة) - die Areale (المناطق)</td>
+                    <td>die Plätze (الأماكن)</td>
+                </tr>
+                <tr>
+                    <td>der Weg (الطريق) - die Wege (الطرق)</td>
+                    <td>die Straße (الشارع) - die Straßen (الشوارع)</td>
+                    <td>das Straßenstück (قطعة الشارع) - die Straßenstücke (قطع الشارع)</td>
+                    <td>die Wege (الطرق)</td>
+                </tr>
+                <tr>
+                    <td>der Computer (الكمبيوتر) - die Computer (الكمبيوترات)</td>
+                    <td>die Maus (الفأرة) - die Mäuse (الفئران)</td>
+                    <td>das Gerät (الجهاز) - die Geräte (الأجهزة)</td>
+                    <td>die Computer (الكمبيوترات)</td>
+                </tr>
+            </table>
+        </div>
+        
+        
+
+        <div id="adjectives-table" class="hidden">
+            <!-- Add content for adjectives table here -->
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var content = document.getElementById('content');
+            sidebar.classList.toggle('open');
+            content.classList.toggle('sidebar-open');
+        }
+
+        function showTable(tableId) {
+            document.getElementById('pronouns-table').classList.add('hidden');
+            document.getElementById('verbs-table').classList.add('hidden');
+            document.getElementById('nouns-table').classList.add('hidden');
+            document.getElementById('adjectives-table').classList.add('hidden');
+            document.getElementById(tableId + '-table').classList.remove('hidden');
+            function speakText() {
+            const selectedText = window.getSelection().toString();
+            if (selectedText) {
+                const utterance = new SpeechSynthesisUtterance(selectedText);
+                utterance.lang = 'de-DE'; // تعيين اللغة إلى الألمانية
+                utterance.rate = .8; // تعيين السرعة (1 هي السرعة العادية)
+                utterance.pitch = 1; // تعيين النغمة (1 هي النغمة العادية)
+
+                // الحصول على قائمة الأصوات المتاحة وتعيين أحدها إذا كان مناسبًا
+                const voices = speechSynthesis.getVoices();
+                // البحث عن صوت ألماني إذا كان متاحًا
+                const germanVoice = voices.find(voice => voice.lang === 'de-DE');
+                if (germanVoice) {
+                    utterance.voice = germanVoice;
+                }
+
+                speechSynthesis.speak(utterance);
+            } 
+        }
+
+        document.addEventListener('mouseup', speakText);
+        
+        }
+    </script>
+</body>
+</html>
